@@ -13,7 +13,7 @@ let quote = [
 
 function showRandomQuote() {
   let randomIndex = Math.floor(Math.random() * quote.length);
-  display.textContent = quote[randomIndex].text;
+  display.innerHTML = quote[randomIndex].text;
 }
 
 function addQuote() {
