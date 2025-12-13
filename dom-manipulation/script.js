@@ -1,5 +1,7 @@
 let display = document.getElementById("quoteDisplay");
-let newQuote = document.getElementById("newQuote");
+let showQuote = document.getElementById("newQuote");
+let newQuote = document.getElementById("newQuoteText");
+let newCategory = document.getElementById("newQuoteCategory");
 
 let quote = [
   {
@@ -14,4 +16,14 @@ function showRandomQuote() {
   display.textContent = quote[randomIndex].text;
 }
 
-newQuote.addEventListener("click", showRandomQuote);
+function addQuote() {
+  let newQuoteObject = {};
+  newQuoteObject.text = newQuote.value;
+  newQuoteObject.category = newCategory.value;
+  quote.push(newQuoteObject);
+
+  newCategory.value = "";
+  newQuote.value = "";
+}
+
+showQuote.addEventListener("click", showRandomQuote);
