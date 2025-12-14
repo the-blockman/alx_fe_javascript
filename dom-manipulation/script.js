@@ -185,6 +185,44 @@ async function syncQuotesFromServer() {
     });
 
     normalizedServerQuotes.forEach((serverQuote) => {
+      const localIndex = quote.findIndex(
+        (localQuote) => localQuote.text === serverQuote.text
+      );
+
+      if (localIndex === -1) {
+        // New quote
+        quote.push(serverQuote);
+        updated = true;
+      } else if (quote[localIndex].category !== serverQuote.category) {
+        // Conflict detected
+        const conflictContainer = document.getElementById("conflictContainer");
+
+        const conflictDiv = document.createElement("div");
+        conflictDiv.textContent = `Conflict for "${serverQuote.text}": local="${quote[localIndex].category}", server="${serverQuote.category}"`;
+
+        const acceptBtn = document.createElement("button");
+        acceptBtn.textContent = "Accept Server";
+
+        acceptBtn.addEventListener("click", () => {
+          quote[localIndex].category = serverQuote.category; // server wins
+          localStorage.setItem("quotes", JSON.stringify(quote));
+          conflictDiv.remove();
+          populateCategories();
+        });
+
+        const keepBtn = document.createElement("button");
+        keepBtn.textContent = "Keep Local";
+        keepBtn.addEventListener("click", () => {
+          conflictDiv.remove();
+        });
+
+        conflictDiv.appendChild(acceptBtn);
+        conflictDiv.appendChild(keepBtn);
+        conflictContainer.appendChild(conflictDiv);
+
+        updated = true;
+      }
+
       const existsLocally = quote.some(
         (localQuote) => localQuote.text === serverQuote.text
       );
@@ -198,7 +236,16 @@ async function syncQuotesFromServer() {
     if (updated) {
       localStorage.setItem("quotes", JSON.stringify(quote));
       populateCategories();
+
       console.log("Local quotes updated from server");
+
+      const status = document.getElementById("syncStatus");
+      status.textContent = "Quotes synced from server!";
+      status.style.display = "block";
+
+      setTimeout(() => {
+        status.style.display = "none";
+      }, 5000);
     }
   } catch (error) {
     console.error("sync failed", error);
@@ -208,7 +255,7 @@ async function syncQuotesFromServer() {
 setInterval(() => {
   fetchQuotesFromServer();
   syncQuotesFromServer();
-}, 10000); // every 50 seconds
+}, 10000); // every 10 seconds
 
 showQuote.addEventListener("click", filterQuotes);
 populateCategories();

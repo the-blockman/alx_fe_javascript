@@ -30,6 +30,19 @@
       accept=".json"
       onchange="importFromJsonFile(event)"
     />
+    <div
+      id="syncStatus"
+      style="
+        display: none;
+        padding: 10px;
+        background-color: #ffeb3b;
+        color: #000;
+        margin-bottom: 10px;
+        border-radius: 5px;
+      "
+    ></div>
+    <div id="conflictContainer" style="margin-bottom: 10px"></div>
+
     <script src="script.js"></script>
   </body>
 </html>
