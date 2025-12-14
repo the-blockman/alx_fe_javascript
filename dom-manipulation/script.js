@@ -144,7 +144,7 @@ function filterQuotes() {
 
 async function fetchQuotesFromServer() {
   try {
-    let res = await fetch("https://jsonplaceholder.typicode.com/posts");
+    let res = await fetch("https://dummyjson.com/quotes");
     let data = await res.json();
     console.log("fetched from server:", data);
   } catch (error) {
@@ -154,7 +154,7 @@ async function fetchQuotesFromServer() {
 
 async function postQuoteToServer(newQuoteObject) {
   try {
-    let res = await fetch("https://jsonplaceholder.typicode.com/posts", {
+    let res = await fetch("https://dummyjson.com/quotes", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -168,9 +168,47 @@ async function postQuoteToServer(newQuoteObject) {
   }
 }
 
+async function syncQuotesFromServer() {
+  try {
+    let res = await fetch("https://dummyjson.com/quotes");
+    let serverData = await res.json();
+
+    let updated = false;
+
+    const serverQuotes = serverData.quotes;
+
+    const normalizedServerQuotes = serverQuotes.map((q) => {
+      return {
+        text: q.quote,
+        category: q.author,
+      };
+    });
+
+    normalizedServerQuotes.forEach((serverQuote) => {
+      const existsLocally = quote.some(
+        (localQuote) => localQuote.text === serverQuote.text
+      );
+
+      if (!existsLocally) {
+        quote.push(serverQuote);
+        updated = true;
+      }
+    });
+
+    if (updated) {
+      localStorage.setItem("quotes", JSON.stringify(quote));
+      populateCategories();
+      console.log("Local quotes updated from server");
+    }
+  } catch (error) {
+    console.error("sync failed", error);
+  }
+}
+
 setInterval(() => {
   fetchQuotesFromServer();
-}, 50000); // every 50 seconds
+  syncQuotesFromServer();
+}, 10000); // every 50 seconds
 
 showQuote.addEventListener("click", filterQuotes);
 populateCategories();
