@@ -117,10 +117,11 @@ function importFromJsonFile(event) {
 }
 
 function populateCategories() {
-  const uniqueCategories = new Set();
-  quote.forEach((q) => {
+  const categories = quote.map((q) => q.category);
+  const uniqueCategories = [...new Set(categories)];
+  /*quote.forEach((q) => {
     uniqueCategories.add(q.category);
-  });
+  });*/
   uniqueCategories.forEach((c) => {
     const option = document.createElement("option");
     option.value = c;
