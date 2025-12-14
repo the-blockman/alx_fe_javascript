@@ -1,7 +1,5 @@
 let display = document.getElementById("quoteDisplay");
 let showQuote = document.getElementById("newQuote");
-let newQuote = document.getElementById("newQuoteText");
-let newCategory = document.getElementById("newQuoteCategory");
 
 let quote = [
   {
@@ -10,6 +8,15 @@ let quote = [
   },
   { text: "kill two birds with one stone", category: "inspirational" },
 ];
+
+function loadQuotes() {
+  const savedQuotes = localStorage.getItem("quotes");
+  if (savedQuotes) {
+    quote = JSON.parse(savedQuotes);
+  }
+}
+
+loadQuotes();
 
 function showRandomQuote() {
   let randomIndex = Math.floor(Math.random() * quote.length);
@@ -25,9 +32,9 @@ function createAddQuoteForm() {
   quoteInput.placeholder = "Enter a new quote";
 
   const quoteCategory = document.createElement("input");
-  quoteInput.id = "newQuoteCategory";
-  quoteInput.type = "text";
-  quoteInput.placeholder = "Enter quote category";
+  quoteCategory.id = "newQuoteCategory";
+  quoteCategory.type = "text";
+  quoteCategory.placeholder = "Enter quote category";
 
   const addBtn = document.createElement("button");
   addBtn.textContent = "Add Quote";
@@ -40,14 +47,45 @@ function createAddQuoteForm() {
   document.body.appendChild(formDiv);
 }
 
+createAddQuoteForm();
+
 function addQuote() {
+  let newQuote = document.getElementById("newQuoteText");
+  let newCategory = document.getElementById("newQuoteCategory");
+
   let newQuoteObject = {};
   newQuoteObject.text = newQuote.value;
   newQuoteObject.category = newCategory.value;
   quote.push(newQuoteObject);
 
+  localStorage.setItem("quotes", JSON.stringify(quote));
+
   newCategory.value = "";
   newQuote.value = "";
+}
+
+function exportQuotes() {
+  let exportString = JSON.stringify(quote);
+  const exportBlob = new Blob([exportString], { type: "application/json" });
+  const exportLink = URL.createObjectURL(exportBlob);
+  const downloadLink = document.createElement("a");
+  downloadLink.href = exportLink;
+  downloadLink.download = "quotes.json";
+  downloadLink.click();
+  URL.revokeObjectURL(exportLink);
+}
+
+function importFromJsonFile(event) {
+  const file = event.target.files[0];
+  const reader = new FileReader();
+  reader.readAsText(file);
+  reader.onload = function () {
+    const text = reader.result;
+    const importedQuotes = JSON.parse(text);
+    quote.push(...importedQuotes);
+    localStorage.setItem("quotes", JSON.stringify(quote));
+    alert("Quotes imported successfully!");
+  };
 }
 
 showQuote.addEventListener("click", showRandomQuote);
