@@ -144,7 +144,7 @@ function filterQuotes() {
 
 async function fetchQuotesFromServer() {
   try {
-    let res = await fetch("https://dummyjson.com/quotes");
+    let res = await fetch("https://jsonplaceholder.typicode.com/posts");
     let data = await res.json();
     console.log("fetched from server:", data);
   } catch (error) {
@@ -154,12 +154,18 @@ async function fetchQuotesFromServer() {
 
 async function postQuoteToServer(newQuoteObject) {
   try {
-    let res = await fetch("https://dummyjson.com/quotes", {
+    const postBody = {
+      title: newQuoteObject.text,
+      body: "",
+      userId: 1,
+    };
+
+    let res = await fetch("https://jsonplaceholder.typicode.com/posts", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(newQuoteObject),
+      body: JSON.stringify(postBody),
     });
     let data = await res.json();
     console.log("server response after post:", data);
@@ -170,17 +176,17 @@ async function postQuoteToServer(newQuoteObject) {
 
 async function syncQuotesFromServer() {
   try {
-    let res = await fetch("https://dummyjson.com/quotes");
+    let res = await fetch("https://jsonplaceholder.typicode.com/posts");
     let serverData = await res.json();
 
     let updated = false;
 
-    const serverQuotes = serverData.quotes;
+    //const serverQuotes = serverData.quotes;
 
-    const normalizedServerQuotes = serverQuotes.map((q) => {
+    const normalizedServerQuotes = serverData.map((q) => {
       return {
-        text: q.quote,
-        category: q.author,
+        text: q.title,
+        category: `User ${q.userId}`,
       };
     });
 
