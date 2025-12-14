@@ -69,6 +69,22 @@ function addQuote() {
   newQuoteObject.category = newCategory.value;
   quote.push(newQuoteObject);
 
+  let categoryOptions = categoryFilter.options;
+  let categoryExists = false;
+
+  for (let i = 0; i < categoryOptions.length; i++) {
+    if (categoryOptions[i].value === newCategory.value) {
+      categoryExists = true;
+      break;
+    }
+  }
+  if (!categoryExists) {
+    const option = document.createElement("option");
+    option.value = newQuoteObject.category;
+    option.textContent = newQuoteObject.category;
+    categoryFilter.appendChild(option);
+  }
+
   localStorage.setItem("quotes", JSON.stringify(quote));
 
   newCategory.value = "";
@@ -126,3 +142,5 @@ function filterQuotes() {
 
 showQuote.addEventListener("click", filterQuotes);
 populateCategories();
+
+console.log(quote);
