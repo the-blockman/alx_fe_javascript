@@ -78,6 +78,7 @@ function addQuote() {
       break;
     }
   }
+
   if (!categoryExists) {
     const option = document.createElement("option");
     option.value = newQuoteObject.category;
