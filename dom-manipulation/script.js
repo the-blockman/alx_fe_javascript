@@ -142,6 +142,36 @@ function filterQuotes() {
   localStorage.setItem("lastCategory", selectedCategory);
 }
 
+async function fetchQuotesFromServer() {
+  try {
+    let res = await fetch("https://jsonplaceholder.typicode.com/posts");
+    let data = await res.json();
+    console.log("fetched from server:", data);
+  } catch (error) {
+    console.error("error fetching from server:", error);
+  }
+}
+
+async function postQuoteToServer(newQuoteObject) {
+  try {
+    let res = await fetch("https://jsonplaceholder.typicode.com/posts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newQuoteObject),
+    });
+    let data = await res.json();
+    console.log("server response after post:", data);
+  } catch (error) {
+    console.error("error posting to server:", error);
+  }
+}
+
+setInterval(() => {
+  fetchQuotesFromServer();
+}, 50000); // every 50 seconds
+
 showQuote.addEventListener("click", filterQuotes);
 populateCategories();
 
