@@ -246,7 +246,7 @@ async function syncQuotesFromServer() {
       console.log("Local quotes updated from server");
 
       const status = document.getElementById("syncStatus");
-      status.textContent = "Quotes synced from server!";
+      status.textContent = "Quotes synced with server!";
       status.style.display = "block";
 
       setTimeout(() => {
